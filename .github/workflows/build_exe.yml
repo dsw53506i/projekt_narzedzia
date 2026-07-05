@@ -1,0 +1,38 @@
+name: Projekt Koncowy Budowanie EXE
+
+on:
+  schedule:
+    - cron: '0 12 * * 0' # Raz w tygodniu (Niedziela 12:00)
+  push:
+    branches: [ "main" ] # Po kazdym pushu na main
+  workflow_dispatch: # Opcja recznego uruchomienia
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Pobranie kodu
+      uses: actions/checkout@v3
+
+    - name: Konfiguracja Pythona
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Instalacja komponentow przez skrypt installResources
+      shell: powershell
+      run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        ./installResources.ps1
+
+    - name: Kompilacja skryptu do jednego pliku EXE
+      shell: powershell
+      run: |
+        pyinstaller.exe --onefile converter.py
+
+    - name: Upload gotowego pliku EXE jako artefakt
+      uses: actions/upload-artifact@v3
+      with:
+        name: Gotowy-Konwerter-EXE
+        path: dist/converter.exe
