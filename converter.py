@@ -2,6 +2,12 @@ import sys
 import os
 import json
 import yaml
+import xml.etree.ElementTree as ET
+
+def xml_to_dict(element):
+    if len(element) == 0:
+        return element.text
+    return {child.tag: xml_to_dict(child) for child in element}
 
 def wczytaj_dane(sciezka):
     if not os.path.exists(sciezka):
@@ -20,10 +26,14 @@ def wczytaj_dane(sciezka):
                 if dane is None:
                     raise yaml.YAMLError("Plik YAML jest pusty.")
                 return dane
+        elif rozszerzenie == 'xml':
+            tree = ET.parse(sciezka)
+            root = tree.getroot()
+            return xml_to_dict(root)
         else:
             print(f"Blad: Nieobslugiwany format wejsciowy: .{rozszerzenie}")
             sys.exit(1)
-    except (json.JSONDecodeError, yaml.YAMLError) as e:
+    except (json.JSONDecodeError, yaml.YAMLError, ET.ParseError) as e:
         print(f"Blad skladni w pliku {sciezka}: {e}")
         sys.exit(1)
 
