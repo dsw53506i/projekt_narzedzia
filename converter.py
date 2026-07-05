@@ -28,11 +28,21 @@ def wczytaj_dane(sciezka):
         sys.exit(1)
 
 def zapisz_dane(dane, sciezka):
+    rozszerzenie = sciezka.split('.')[-1].lower()
     try:
-        with open(sciezka, 'w', encoding='utf-8') as f:
-            json.dump(dane, f, indent=4, ensure_ascii=False)
+        if rozszerzenie == 'json':
+            with open(sciezka, 'w', encoding='utf-8') as f:
+                json.dump(dane, f, indent=4, ensure_ascii=False)
+            print(f"Task3 sukces: Zapisano plik JSON do {sciezka}")
+        elif rozszerzenie in ['yml', 'yaml']:
+            with open(sciezka, 'w', encoding='utf-8') as f:
+                yaml.dump(dane, f, default_flow_style=False, allow_unicode=True)
+            print(f"Task5 sukces: Zapisano plik YAML do {sciezka}")
+        else:
+            print(f"Blad: Nieobslugiwany format wyjsciowy: .{rozszerzenie}")
+            sys.exit(1)
     except Exception as e:
-        print(f"Blad zapisu pliku: {e}")
+        print(f"Blad zapisu pliku {sciezka}: {e}")
         sys.exit(1)
 
 def main():
