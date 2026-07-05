@@ -13,11 +13,22 @@ def wczytaj_dane(sciezka):
         print(f"Blad skladni JSON: {e}")
         sys.exit(1)
 
+def zapisz_dane(dane, sciezka):
+    try:
+        with open(sciezka, 'w', encoding='utf-8') as f:
+            json.dump(dane, f, indent=4, ensure_ascii=False)
+        print(f"Task3 sukces: Zapisano plik JSON do {sciezka}")
+    except Exception as e:
+        print(f"Blad zapisu pliku: {e}")
+        sys.exit(1)
+
 def main():
     if len(sys.argv) != 3:
+        print("Blad: Niepoprawna liczba argumentow!")
         sys.exit(1)
+        
     dane = wczytaj_dane(sys.argv[1])
-    print("Task2: JSON wczytany i zweryfikowany.")
+    zapisz_dane(dane, sys.argv[2])
 
 if __name__ == "__main__":
     main()
